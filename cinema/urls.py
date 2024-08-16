@@ -2,12 +2,14 @@ from django.urls import path, include
 
 from rest_framework import routers
 
-from cinema.views import (GenreList,
-                          GenreDetail,
-                          ActorList,
-                          ActorDetail,
-                          CinemaHallViewSet,
-                          MovieViewSet)
+from cinema.views import (
+    GenreList,
+    GenreDetail,
+    ActorList,
+    ActorDetail,
+    CinemaHallViewSet,
+    MovieViewSet
+)
 
 
 cinema_hall_list = CinemaHallViewSet.as_view(actions={"get": "list",
@@ -23,7 +25,6 @@ router = routers.DefaultRouter()
 
 router.register("movies", MovieViewSet, basename="movies")
 
-# use /movie/ for get or post amd use  /movie/pk/ for delete, update etc...
 
 urlpatterns = [
     path("genres/", GenreList.as_view(),
