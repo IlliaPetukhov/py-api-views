@@ -16,7 +16,7 @@ class MovieViewSet(viewsets.ModelViewSet):
     serializer_class = MovieSerializer
 
 
-class GenreViewList(APIView):
+class GenreList(APIView):
     def get(self, request) -> Response:
         genres = Genre.objects.all()
         serializer = GenreSerializer(genres, many=True)
@@ -29,7 +29,7 @@ class GenreViewList(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class GenreViewDetail(APIView):
+class GenreDetail(APIView):
     def get_object(self, pk):
         return get_object_or_404(Genre, pk=pk)
 
@@ -43,14 +43,20 @@ class GenreViewDetail(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def patch(self, request, pk) -> Response:
+        serializer = GenreSerializer(self.get_object(pk=pk), data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def delete(self, request, pk) -> Response:
         self.get_object(pk=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ActorViewList(generics.GenericAPIView,
-                    mixins.ListModelMixin,
-                    mixins.CreateModelMixin):
+class ActorList(generics.GenericAPIView,
+                mixins.ListModelMixin,
+                mixins.CreateModelMixin):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
@@ -61,10 +67,10 @@ class ActorViewList(generics.GenericAPIView,
         return self.create(request, *args, **kwargs)
 
 
-class ActorViewDetail(generics.GenericAPIView,
-                      mixins.UpdateModelMixin,
-                      mixins.DestroyModelMixin,
-                      mixins.RetrieveModelMixin):
+class ActorDetail(generics.GenericAPIView,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
+                  mixins.RetrieveModelMixin):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
@@ -76,6 +82,9 @@ class ActorViewDetail(generics.GenericAPIView,
 
     def delete(self, request, *args, **kwargs) -> Response:
         return self.destroy(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs) -> Response:
+        return self.partial_update(request, *args, **kwargs)
 
 
 class CinemaHallViewSet(mixins.ListModelMixin,

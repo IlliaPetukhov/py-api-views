@@ -14,13 +14,34 @@ class MovieSerializer(serializers.Serializer):
                                                 queryset=Genre.objects.all())
 
     def create(self, validated_data):
-        return Movie.objects.create(**validated_data)
+        actors = validated_data.pop("actors", [])
+        genres = validated_data.pop("genres", [])
+        movie = Movie.objects.create(**validated_data)
+        movie.actors.set(actors)
+        movie.genres.set(genres)
+        return movie
 
     def update(self, instance, validated_data):
+        actors = validated_data.pop("actors", None)
+        genres = validated_data.pop("genres", None)
+
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get(
             "description", instance.description)
         instance.duration = validated_data.get("duration", instance.duration)
+
+        if actors is not None:
+            if actors:
+                instance.actors.set(actors)
+            else:
+                instance.actors.clear()
+
+        if genres is not None:
+            if genres:
+                instance.genres.set(genres)
+            else:
+                instance.genres.clear()
+
         instance.save()
         return instance
 
@@ -73,5 +94,7 @@ class CinemaHallSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
         instance.rows = validated_data.get("rows", instance.rows)
+        instance.seats_in_row = (validated_data.get
+                                 ("seats_in_row", instance.seats_in_row))
         instance.save()
         return instance

@@ -2,10 +2,10 @@ from django.urls import path, include
 
 from rest_framework import routers
 
-from cinema.views import (GenreViewList,
-                          GenreViewDetail,
-                          ActorViewList,
-                          ActorViewDetail,
+from cinema.views import (GenreList,
+                          GenreDetail,
+                          ActorList,
+                          ActorDetail,
                           CinemaHallViewSet,
                           MovieViewSet)
 
@@ -21,22 +21,22 @@ cinema_hall_detail = (CinemaHallViewSet.as_view
 
 router = routers.DefaultRouter()
 
-router.register("movie", MovieViewSet, basename="movie")
+router.register("movies", MovieViewSet, basename="movies")
 
 # use /movie/ for get or post amd use  /movie/pk/ for delete, update etc...
 
 urlpatterns = [
-    path("genres/", GenreViewList.as_view(),
+    path("genres/", GenreList.as_view(),
          name="genres-list"),
-    path("genres/<int:pk>/", GenreViewDetail.as_view(),
+    path("genres/<int:pk>/", GenreDetail.as_view(),
          name="genres-detail"),
-    path("actors/", ActorViewList.as_view(),
+    path("actors/", ActorList.as_view(),
          name="actors-list"),
-    path("actors/<int:pk>/", ActorViewDetail.as_view(),
+    path("actors/<int:pk>/", ActorDetail.as_view(),
          name="actor-detail"),
-    path("cinema-halls/", cinema_hall_list,
+    path("cinema_halls/", cinema_hall_list,
          name="cinema-halls-list"),
-    path("cinema-halls/<int:pk>/", cinema_hall_detail,
+    path("cinema_halls/<int:pk>/", cinema_hall_detail,
          name="cinema-hall-detail"),
     path("", include(router.urls)),
 
